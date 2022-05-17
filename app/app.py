@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import logging
 
 from api.config import get_port
-from api.service.order import get_order, ApiException
+from api.service.order import get_order, ApiException, get_orders_array
 
 app = Flask(__name__, static_url_path='/static', template_folder='frontend/build',
             static_folder='frontend/build/static')
@@ -20,6 +20,19 @@ def order(order_nr):
     order = get_order(order_nr)
 
     response = jsonify(order)
+
+    return response
+
+
+@app.route('/api/orders', methods=['GET'])
+def orders():
+    """
+    Get all orders
+    :return:
+    """
+    logging.info(f'/api/orders')
+
+    response = jsonify(get_orders_array())
 
     return response
 
