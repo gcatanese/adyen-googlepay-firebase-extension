@@ -24,7 +24,7 @@ function ProductList() {
 
   return (
 
-    <ImageList rowHeight='300' >
+    <ImageList rowHeight='370' >
       { data.map(order => (
         <ImageListItem key={order.image} sx={{ padding: 2}}>
           <img
