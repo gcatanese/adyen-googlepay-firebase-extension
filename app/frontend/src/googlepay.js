@@ -13,6 +13,12 @@ import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+import 'semantic-ui-css/semantic.min.css'
+import { Message } from "semantic-ui-react";
+
+import {hideElement, showElement} from "./utils.js"
 
 class CheckoutGooglePay extends React.Component {
 
@@ -20,7 +26,8 @@ class CheckoutGooglePay extends React.Component {
         super();
 
         this.state = {
-            'order': {}
+            'order': {},
+            'errorMessage': ''
         }
     }
 
@@ -32,37 +39,41 @@ class CheckoutGooglePay extends React.Component {
     }
 
     async addPaymentRequest(amount, currency, token) {
+        showElement("loadingCardSpinnerId");
         const ref = await addDoc(collection(db, 'payments'), {
             psp: 'adyen',
             total: amount,
             currency: currency,
             paymentToken: token
         })
-        console.log(ref);
-        console.log('doc id: ' + ref.id);
 
-//        const observer = onSnapshot(ref, docSnapshot => {
-//            console.log(docSnapshot);
-//        }, err => {
-//            console.log(`Encountered error: ${err}`);
-//        });
-
-        //const q = query(collection(db, "payments"), where("psp", "==", 'adyen'));
         const q = query(collection(db, "payments"), where("__name__", "==", ref.id));
 
         const observer = onSnapshot(q, docSnapshot => {
             docSnapshot.docChanges().forEach(change => {
-                if (change.type === "added") {
-                    console.log("record created -> ", change.doc.data());
-                }
                 if (change.type === "modified") {
                     console.log("record updated ", change.doc.data());
+                    this.payment_result(change.doc.data());
+                    hideElement("loadingCardSpinnerId");
                 }
             });
         }, err => {
             console.log(`Encountered error: ${err}`);
         });
+    }
 
+    async payment_result(data) {
+        if(data.error !== undefined) {
+            console.log(data.error);
+            this.setState({'errorMessage': data.error.message})
+            showElement("paymentErrorMessageId");
+        } else {
+            showElement("paymentSuccessMessageId");
+        }
+    }
+
+    handleErrorMessageDismiss = () => {
+        hideElement("paymentErrorMessageId");
     }
 
     render() {
@@ -121,7 +132,7 @@ class CheckoutGooglePay extends React.Component {
                               totalPrice: '13.00',
                                 currencyCode: 'USD',
                                 countryCode: 'US',
-                            },
+                            }
                         }}
                         onLoadPaymentData={ paymentRequest => {
                             console.log('load payment data', paymentRequest);
@@ -130,8 +141,38 @@ class CheckoutGooglePay extends React.Component {
                             this.addPaymentRequest(order.amount, 'EUR', token);
                             }
                         }
+                        onCancel={() => console.log('canceled by shopper')}
                     />
                 </Grid>
+                { /* spinning during payment */ }
+                <div id="loadingCardSpinnerId" style={{display: 'none'}}>
+                    <br/>
+                    <Grid container justify = "center" >
+                        <CircularProgress size={85} thickness={1}/>
+                    </Grid>
+                </div>
+                { /* payment error message */ }
+                <div id="paymentErrorMessageId" style={{display: 'none'}}>
+                    <br/>
+                    <Grid container justify = "center" >
+                        <Message negative
+                            onDismiss={this.handleErrorMessageDismiss}
+                            header="Error"
+                            content={"An error has occurred [" + this.state.errorMessage + "]"}
+                        />
+                    </Grid>
+                </div>
+                { /* payment success message */ }
+                <div id="paymentSuccessMessageId" style={{display: 'none'}}>
+                    <br/>
+                    <Grid container justify = "center" >
+                        <Message positive
+                            header="Your payment has been executed"
+                            content="Thank you for shopping with us!"
+                        />
+                    </Grid>
+                </div>
+
                 </Container>
             </div>
         );
