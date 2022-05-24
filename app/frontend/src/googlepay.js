@@ -109,7 +109,12 @@ class CheckoutGooglePay extends React.Component {
                             <Typography variant="body1">{order.title}</Typography>
                             <Box fontWeight="fontWeightLight">(pic by {order.author})</Box>
                         </div>
-                        <br/>
+                            <div style= {{width: "100%", margin: "auto", textAlign: "right", paddingRight: "2px"}} >
+                              <img
+                                style = {{ width: "12%", height: "12%"}}
+                                src = "/adyen.svg"
+                            />
+                            </div>
                     </Card>
                     <br/>
                     { /* gpay container */ }
