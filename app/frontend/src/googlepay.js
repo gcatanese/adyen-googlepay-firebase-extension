@@ -83,6 +83,19 @@ class CheckoutGooglePay extends React.Component {
         return (
             <div>
                 <Header/>
+
+                <Typography variant="body2" color="textSecondary" align="center"
+                    style = {{
+                        top : "0",
+                        textalign: 'center',
+                        width: '100%',
+                        padding: '5px',
+                        marginTop: 'auto'
+                    }}>
+                    <a href="/">Home</a>&nbsp;&nbsp;
+                </Typography>
+                <br/>
+
                 <Container maxWidth="md">
                     { /* product container */ }
                     <Card  raised="true" >
