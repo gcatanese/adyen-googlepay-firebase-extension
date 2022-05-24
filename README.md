@@ -3,7 +3,7 @@
 This repository shows how to perform a payment with GooglePay using the [Firebase extension](https://github.com/google-pay/firebase-extension) 
 and [Adyen](https://www.adyen.com/) as Payment Service Provider (PSP).
 
-![Alt text](readme-homepage.png?raw=true "Homepage screenshot")
+![App homepage](readme-homepage.png)
 
 ## Prerequisites
 
