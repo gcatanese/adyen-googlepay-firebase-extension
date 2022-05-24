@@ -129,16 +129,16 @@ class CheckoutGooglePay extends React.Component {
                             transactionInfo: {
                               totalPriceStatus: 'FINAL',
                               totalPriceLabel: 'Total',
-                              totalPrice: '13.00',
-                                currencyCode: 'USD',
-                                countryCode: 'US',
+                              totalPrice: order.amount,
+                                currencyCode: order.currency,
+                                countryCode: 'NL',
                             }
                         }}
                         onLoadPaymentData={ paymentRequest => {
                             console.log('load payment data', paymentRequest);
                             var token = paymentRequest.paymentMethodData.tokenizationData.token;
                             /* add payment to Firecloud */
-                            this.addPaymentRequest(order.amount, 'EUR', token);
+                            this.addPaymentRequest(order.amount, order.currency, token);
                             }
                         }
                         onCancel={() => console.log('canceled by shopper')}
