@@ -119,47 +119,46 @@ class CheckoutGooglePay extends React.Component {
                     <br/>
                     { /* gpay container */ }
                     <Grid container justify = "center">
-                    <GooglePayButton
-                        environment="TEST"
-                        paymentRequest={{
-                            apiVersion: 2,
-                            apiVersionMinor: 0,
-                            allowedPaymentMethods: [
-                                {
-                                    type: 'CARD',
-                                    parameters: {
-                                        allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-                                        allowedCardNetworks: ['MASTERCARD', 'VISA'],
-                                },
-                                tokenizationSpecification: {
-                                    type: 'PAYMENT_GATEWAY',
-                                    parameters: {
-                                        gateway: 'example',
-                                        gatewayMerchantId: 'exampleGatewayMerchantId',
+                        <GooglePayButton
+                            environment="TEST"
+                            paymentRequest={{
+                                apiVersion: 2,
+                                apiVersionMinor: 0,
+                                allowedPaymentMethods: [
+                                    {
+                                        type: 'CARD',
+                                        parameters: {
+                                            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                                            allowedCardNetworks: ['MASTERCARD', 'VISA'],
                                         },
-                                    },
+                                    tokenizationSpecification: {
+                                        type: 'PAYMENT_GATEWAY',
+                                        parameters: {
+                                            gateway: 'adyen',
+                                            gatewayMerchantId: 'TestMerchantAccount',
+                                            },
+                                        },
+                                    }
+                                ],
+                                merchantInfo: {
+                                  merchantId: 'TestMerchantAccount',
+                                  merchantName: 'Demo',
+                                },
+                                transactionInfo: {
+                                  totalPriceStatus: 'FINAL',
+                                  totalPriceLabel: 'Total',
+                                  totalPrice: order.amount,
+                                    currencyCode: order.currency,
+                                    countryCode: 'NL',
                                 }
-                            ],
-                            merchantInfo: {
-                              merchantId: '12345678901234567890',
-                              merchantName: 'Demo Merchant',
-                            },
-                            transactionInfo: {
-                              totalPriceStatus: 'FINAL',
-                              totalPriceLabel: 'Total',
-                              totalPrice: order.amount,
-                                currencyCode: order.currency,
-                                countryCode: 'NL',
+                            }}
+                            onLoadPaymentData={ paymentRequest => {
+                                var token = paymentRequest.paymentMethodData.tokenizationData.token;
+                                /* add payment to Firecloud */
+                                this.addPaymentRequest(order.amount, order.currency, token);
+                                }
                             }
-                        }}
-                        onLoadPaymentData={ paymentRequest => {
-                            console.log('load payment data', paymentRequest);
-                            var token = paymentRequest.paymentMethodData.tokenizationData.token;
-                            /* add payment to Firecloud */
-                            this.addPaymentRequest(order.amount, order.currency, token);
-                            }
-                        }
-                        onCancel={() => console.log('canceled by shopper')}
+                            onCancel={() => console.log('canceled by shopper')}
                     />
                 </Grid>
                 { /* spinning during payment */ }
